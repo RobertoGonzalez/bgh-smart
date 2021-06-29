@@ -1,4 +1,4 @@
-const { ENDPOINT_CAPABILITIES, FAN_MODE } = require("./lib/constants");
+const { ENDPOINT_CAPABILITIES, FAN_MODE, MODE } = require("./lib/constants");
 const utils = require("./lib/utils");
 const solidmation = require("./lib/solidmationApi");
 
@@ -92,69 +92,69 @@ class SolidmationPlatform {
 
     const service = accessory.getService(Service.Thermostat);
 
-    try {
-      service.addOptionalCharacteristic(Characteristic.SwingMode);
-      service.addOptionalCharacteristic(Characteristic.RotationSpeed);
-    } catch (err) {
-      this.log(err);
-    }
+    // try {
+    //   service.addOptionalCharacteristic(Characteristic.SwingMode);
+    //   service.addOptionalCharacteristic(Characteristic.RotationSpeed);
+    // } catch (err) {
+    //   this.log(err);
+    // }
 
-    service
-      .getCharacteristic(Characteristic.SwingMode)
-      .setProps({
-        perms: [Perms.WRITE_RESPONSE]
-      })
-      .on("get", async (callback) => {
-        // this.log("GET SwingMode");
-        // const device = await this.solidmation.getDeviceStatus(accessory.context.DeviceID)
-        // let fanMode = device.endpointValues.fanMode
-        // if (fanMode == 254) { fanMode = 0 }
-        // if (device.endpointValues.mode == 0) { fanMode = 0 }
-        callback(null, Characteristic.SwingMode.SWING_DISABLED);
-      })
-      .on("set", async (value, callback) => {
-        // let setValue = value
-        // Send value 254 for auto
-        // Send value 255 for no change
-        this.log(`SET SwingMode @ ${value}`);
-        // if (value === 0) { setValue = 254}
-        // this.solidmation.setDeviceStatus(accessory.context.DeviceID, { fanMode: setValue })
-        callback();
-      });
+    // service
+    //   .getCharacteristic(Characteristic.SwingMode)
+    //   .setProps({
+    //     // perms: [Perms.WRITE_RESPONSE]
+    //   })
+    //   .on("get", async (callback) => {
+    //     // this.log("GET SwingMode");
+    //     // const device = await this.solidmation.getDeviceStatus(accessory.context.DeviceID)
+    //     // let fanMode = device.endpointValues.fanMode
+    //     // if (fanMode == 254) { fanMode = 0 }
+    //     // if (device.endpointValues.mode == 0) { fanMode = 0 }
+    //     callback(null, Characteristic.SwingMode.SWING_DISABLED);
+    //   })
+    //   .on("set", async (value, callback) => {
+    //     // let setValue = value
+    //     // Send value 254 for auto
+    //     // Send value 255 for no change
+    //     this.log(`SET SwingMode @ ${value}`);
+    //     // if (value === 0) { setValue = 254}
+    //     // this.solidmation.setDeviceStatus(accessory.context.DeviceID, { fanMode: setValue })
+    //     callback();
+    //   });
 
-    service
-      .getCharacteristic(Characteristic.RotationSpeed)
-      .setProps({
-        minValue: 0,
-        maxValue: 3,
-        minStep: 1,
-        perms: [Perms.WRITE_RESPONSE]
-      })
-      .on("get", async (callback) => {
-        // this.log("GET Speed");
-        const device = await this.solidmation.getDeviceStatus(
-          accessory.context.DeviceID
-        );
-        if( ! device ) return callback('Homebridge is initializing');
-        let fanMode = device.endpointValues.fanMode;
-        if (fanMode == 254 || device.endpointValues.mode == 0) {
-          fanMode = 0;
-        }
-        callback(null, fanMode);
-      })
-      .on("set", async (value, callback) => {
-        let setValue = value;
-        // Send value 254 for auto
-        // Send value 255 for no change
-        this.log(`SET Speed @ ${value}`);
-        if (value === 0 || value === 255) {
-          setValue = FAN_MODE.NO_CHANGE;
-        }
-        this.solidmation.queueSetDeviceStatus(accessory.context.DeviceID, {
-          fanMode: setValue,
-        });
-        callback();
-      });
+    // service
+    //   .getCharacteristic(Characteristic.RotationSpeed)
+    //   .setProps({
+    //     minValue: 0,
+    //     maxValue: 3,
+    //     minStep: 1,
+    //     // perms: [Perms.WRITE_RESPONSE]
+    //   })
+    //   .on("get", async (callback) => {
+    //     // this.log("GET Speed");
+    //     const device = await this.solidmation.getDeviceStatus(
+    //       accessory.context.DeviceID
+    //     );
+    //     if( ! device ) return callback('Homebridge is initializing');
+    //     let fanMode = device.endpointValues.fanMode;
+    //     if (fanMode == 254 || device.endpointValues.mode == 0) {
+    //       fanMode = 0;
+    //     }
+    //     callback(null, fanMode);
+    //   })
+    //   .on("set", async (value, callback) => {
+    //     let setValue = value;
+    //     // Send value 254 for auto
+    //     // Send value 255 for no change
+    //     this.log(`SET Speed @ ${value}`);
+    //     if (value === 0 || value === 255) {
+    //       setValue = FAN_MODE.NO_CHANGE;
+    //     }
+    //     this.solidmation.queueSetDeviceStatus(accessory.context.DeviceID, {
+    //       fanMode: setValue,
+    //     });
+    //     callback();
+    //   });
 
     service
       .getCharacteristic(Characteristic.TemperatureDisplayUnits)
@@ -188,7 +188,6 @@ class SolidmationPlatform {
       .getCharacteristic(Characteristic.TargetHeatingCoolingState)
       .setProps({
         validValues: endpointCapabilities,
-        perms: [Perms.WRITE_RESPONSE]
       })
       .on("get", async (callback) => {
         // this.log(
@@ -197,14 +196,6 @@ class SolidmationPlatform {
         const device = await this.solidmation.getDeviceStatus(
           accessory.context.DeviceID
         );
-        // this.log(
-        //   `GET ${accessory.context.Description} - From ${
-        //     device.endpointValues.mode
-        //   } To ${utils.modeTranslate(
-        //     device.endpointValues.mode,
-        //     "Solidmation"
-        //   )}`
-        // );
         if( ! device ) return callback('Homebridge is initializing');
         callback(
           null,
@@ -212,15 +203,14 @@ class SolidmationPlatform {
         );
       })
       .on("set", (value, callback) => {
+        const valueName = Object.keys(MODE).find(k => MODE[k] === utils.modeTranslate(value, "HomeKit"));
         this.log(
-          `SET ${accessory.context.Description} - TargetHeatingCoolingState @ ${value}`
+          `SET ${accessory.context.Description} - TargetHeatingCoolingState @ ${valueName} (${value})`
         );
         this.solidmation.queueSetDeviceStatus(accessory.context.DeviceID, {
           mode: utils.modeTranslate(value, "HomeKit"),
         })
-
-        // const value = utils.getKeyByValue(device.mode)
-        callback(null,value);
+        callback(null);
       });
 
     service
@@ -229,7 +219,6 @@ class SolidmationPlatform {
         minValue: 17, // Replace with real endpoint values
         maxValue: 30,
         minStep: 1,
-        perms: [Perms.WRITE_RESPONSE],
       })
       .on("get", async (callback) => {
         // this.log(`GET ${accessory.context.Description} - TargetTemperature`);
@@ -244,7 +233,7 @@ class SolidmationPlatform {
         this.solidmation.queueSetDeviceStatus(accessory.context.DeviceID, {
           desiredTempC: value,
         });
-        callback(null, value);
+        callback(null);
       });
 
     service
@@ -255,6 +244,7 @@ class SolidmationPlatform {
           accessory.context.DeviceID
         );
         if( ! device ) return callback('Homebridge is initializing');
+
         callback(null, device.endpointValues.currentTemp);
       });
   }
