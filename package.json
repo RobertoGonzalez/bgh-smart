@@ -1,10 +1,10 @@
 {
-  "name": "homebridge-bgh-smart",
+  "name": "homebridge-bgh-smart-solidmation",
   "keywords": [
     "homebridge-plugin"
   ],
-  "version": "1.0.0",
-  "description": "BGH Smart Control plugin for homebridge",
+  "version": "2.0.0",
+  "description": "Solidmation AC Smart Control plugin for homebridge",
   "main": "dist/index.js",
   "author": "Sergio Behrends <sergio@behrends.com.ar>",
   "scripts": {
