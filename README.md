@@ -24,6 +24,7 @@ Add to your homebridge configuration
 "platforms": [{
   "platform": "BGH-Smart",
   "email": "email@domain.com",
-  "password": "password"
+  "password": "password",
+  "provider": "solidmation"
 }]
 ```
